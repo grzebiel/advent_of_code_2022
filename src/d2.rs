@@ -1,7 +1,7 @@
 use std::io::{BufRead, BufReader};
 use std::fs::File;
 
-pub fn resolve_strategy(f: &dyn Fn(String) -> i64) -> i64
+pub fn resolve_strategy(f: fn(String) -> i64) -> i64
 {
     let file_reader = BufReader::new(File::open("input/d2.txt").unwrap());
     file_reader
@@ -13,7 +13,7 @@ pub fn resolve_strategy(f: &dyn Fn(String) -> i64) -> i64
 
 pub fn p1() -> i64
 {
-    resolve_strategy(&|round: String|
+    resolve_strategy(|round|
             match round.split(" ").collect::<Vec<&str>>()[..] {
                 ["A", "X"] => 1 + 3,
                 ["A", "Y"] => 2 + 6,
@@ -34,7 +34,7 @@ pub fn p1() -> i64
 
 pub fn p2() -> i64
 {
-    resolve_strategy(&|round: String|
+    resolve_strategy(|round|
             match round.split(" ").collect::<Vec<&str>>()[..] {
                 ["A", "X"] => 3 + 0,
                 ["A", "Y"] => 1 + 3,
