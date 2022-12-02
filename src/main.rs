@@ -1,3 +1,6 @@
+mod d2;
+
 fn main() {
-    println!("Hello, world!");
+    dbg!(d2::p1());
+    dbg!(d2::p2());
 }
