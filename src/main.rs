@@ -1,6 +1,6 @@
-mod d2;
+mod d3;
 
 fn main() {
-    dbg!(d2::p1());
-    dbg!(d2::p2());
+    dbg!(d3::p1());
+    dbg!(d3::p2());
 }

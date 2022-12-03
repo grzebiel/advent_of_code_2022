@@ -1,5 +1,5 @@
-use std::io::{BufRead, BufReader};
 use std::fs::File;
+use std::io::{BufRead, BufReader};
 
 pub fn resolve_strategy(f: fn(String) -> i64) -> i64
 {
