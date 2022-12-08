@@ -19,7 +19,10 @@ fn read_forest(path: &str) -> Vec<Vec<i64>> {
 
 pub fn p1(input_path: &str) -> i64 {
     let f = read_forest(input_path);
-    let mut vis : Vec<Vec<bool>> = f.iter().map(|row| row.iter().map(|_| false).collect()).collect();
+    let mut vis: Vec<Vec<bool>> = f
+        .iter()
+        .map(|row| row.iter().map(|_| false).collect())
+        .collect();
 
     // l -> r pass
     for y in 0..f.len() {
@@ -65,54 +68,66 @@ pub fn p1(input_path: &str) -> i64 {
         }
     }
 
-
     vis.into_iter().flatten().filter(|x| *x).count() as i64
 }
 
-fn calculate_score(f: &Vec<Vec<i64>>, tx: usize, ty: usize) -> i64 {
-    // l->r pass
-    dbg!(f[ty][tx]);
-    let (mut lrs, mut rls, mut tbs, mut bts) = (0,0,0,0);
-    for x in tx+1..f[0].len() {
-        lrs += 1;
-        if dbg!(f[ty][x]) >= dbg!(f[ty][tx]) {
-            break
+fn calculate_score(f: &Vec<Vec<i64>>, scores: &mut Vec<Vec<(i64, i64, i64, i64)>>) {
+    // l -> r pass
+    let max_height = 9;
+    for y in 0..f.len() {
+        let mut last_tree_lookup = vec![0; max_height+1];
+        for x in 0..f[0].len() {
+            let first_colistion = *last_tree_lookup[f[y][x] as usize..last_tree_lookup.len() as usize].iter().max().unwrap() as usize;
+            scores[y][x].0 = (x - first_colistion) as i64;
+            last_tree_lookup[f[y][x] as usize] = x;
         }
     }
-    // r->l pass
-    for x in (0..tx).rev() {
-        rls += 1;
-        if f[ty][x] >= f[ty][tx] {
-            break
+
+    // r -> l pass
+    for y in 0..f.len() {
+        let mut last_tree_lookup = vec![f[0].len() - 1; max_height+1];
+        for x in (0..f[0].len()).rev() {
+            let first_colistion = *last_tree_lookup[f[y][x] as usize..last_tree_lookup.len() as usize].iter().min().unwrap() as usize;
+            scores[y][x].1 = (first_colistion - x) as i64;
+            last_tree_lookup[f[y][x] as usize] = x;
         }
     }
-    // t->b pass
-    for y in ty+1..f.len() {
-        tbs += 1;
-        if f[y][tx] >= f[ty][tx] {
-            break
+
+    // t -> b pass
+    for x in 0..f[0].len() {
+        let mut last_tree_lookup = vec![0; max_height+1];
+        for y in 1..f.len() {
+            let first_colistion = *last_tree_lookup[f[y][x] as usize..last_tree_lookup.len() as usize].iter().max().unwrap() as usize;
+            scores[y][x].2 = (y - first_colistion) as i64;
+            last_tree_lookup[f[y][x] as usize] = y;
         }
     }
-    // b->t pass
-    for y in (0..ty).rev() {
-        bts += 1;
-        if f[y][tx] >= f[ty][tx] {
-            break
+
+    // b -> p pass
+    for x in 0..f[0].len() {
+        let mut last_tree_lookup = vec![f.len() - 1; max_height+1];
+        for y in (0..f.len() -1).rev() {
+            let first_colistion = *last_tree_lookup[f[y][x] as usize..last_tree_lookup.len() as usize].iter().min().unwrap() as usize;
+            scores[y][x].3 = (first_colistion - y) as i64;
+            last_tree_lookup[f[y][x] as usize] = y;
         }
     }
-    dbg!(lrs) * dbg!(rls) * dbg!(tbs) * dbg!(bts)
-    // lrs * rls * tbs * bts
 }
 
-pub fn p2(path: &str) -> i64{
+pub fn p2(path: &str) -> i64 {
     let f = read_forest(path);
-    let mut score : Vec<Vec<i64>> = f.iter().map(|row| row.iter().map(|_| 0).collect()).collect();
-    for y in 0..f.len() {
-        for x in 0..f[0].len() {
-            score[y][x] = calculate_score(&f, x, y);
-        }
-    }
-    let ret = score.into_iter().flatten().enumerate().max_by(|x, y| x.1.cmp(&y.1)).unwrap();
+    let mut score: Vec<Vec<(i64, i64, i64, i64)>> = f
+        .iter()
+        .map(|row| row.iter().map(|_| (0, 0, 0, 0)).collect())
+        .collect();
+    calculate_score(&f, &mut score);
+    let ret = score
+        .iter()
+        .flatten()
+        .map(|(a, b, c, d)| a * b * c * d)
+        .enumerate()
+        .max_by(|x, y| x.1.cmp(&y.1))
+        .unwrap();
     ret.1
 }
 
@@ -138,5 +153,6 @@ mod test {
     #[test]
     fn p2_task() {
         dbg!(p2("input/d8.txt"));
+        assert!(false)
     }
 }
