@@ -1,20 +1,13 @@
-use itertools;
 use std::collections::HashSet;
 use std::fs;
-
-enum Step {
-    Up(i64),
-    Right(i64),
-    Down(i64),
-    Left(i64),
-}
 
 fn read_input(path: &str) -> Vec<((i64, i64), i64)> {
     fs::read_to_string(path)
         .unwrap()
-        .split("\n")
+        .split('\n')
+        .filter(|l| !l.is_empty())
         .map(|line| {
-            let mut it = line.split(" ");
+            let mut it = line.split(' ');
             let dir = dbg!(it.next().unwrap());
             let val = dbg!(it.next().unwrap()).parse::<i64>().unwrap();
             match dir {
@@ -32,10 +25,7 @@ fn advance(h: (i64, i64), t: (i64, i64)) -> (i64, i64) {
     match (h.0 - t.0, h.1 - t.1) {
         (i, 0) if i.abs() == 2 => (t.0 + i / i.abs(), t.1),
         (0, i) if i.abs() == 2 => (t.0, t.1 + i / i.abs()),
-        (2, i) if i.abs() <= 2 => (t.0 + 1, t.1 + i / i.abs()),
-        (i, 2) if i.abs() <= 2 => (t.0 + i / i.abs(), t.1 + 1),
-        (-2, i) if i.abs() <= 2 => (t.0 - 1, t.1 + i / i.abs()),
-        (i, -2) if i.abs() <= 2 => (t.0 + i / i.abs(), t.1 - 1),
+        (i, j) if [j.abs(), i.abs()].contains(&2) => (t.0 + i / i.abs(), t.1 + j / j.abs()),
         (x, y) if x.abs() < 2 && y.abs() < 2 => (t.0, t.1),
         (x, y) => panic!("unhandled case for diff {},{}", x, y),
     }
@@ -104,7 +94,7 @@ mod test {
 
     #[test]
     fn p1_task() {
-        dbg!(p1("input/d9.txt"));
+        assert_eq!(p1("input/d9.txt"), 6190);
     }
 
     #[test]
