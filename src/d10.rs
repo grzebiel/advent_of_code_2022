@@ -50,7 +50,9 @@ pub fn p1(input_path: &str) -> i64 {
             continue;
         }
 
-        to_add.map_or((), |v| {register += v;});
+        to_add.map_or((), |v| {
+            register += v;
+        });
     }
     signal_sum
 }
@@ -97,7 +99,7 @@ pub fn p2(input_path: &str) {
             continue;
         }
 
-        to_add.map_or((), |v|{ register+=v});
+        to_add.map_or((), |v| register += v);
     }
     render_crt(&crt);
 }

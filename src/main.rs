@@ -1,5 +1,5 @@
-mod d10;
+mod d11;
 
 fn main() {
-    dbg!(d10::p1("input/d8_test.txt"));
+    dbg!(d11::p1("input/d8_test.txt"));
 }
