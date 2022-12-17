@@ -1,6 +1,6 @@
 use std::fs;
 use std::num::ParseIntError;
-use std::str::{FromStr, Chars};
+use std::str::FromStr;
 use itertools::{self, Itertools};
 use std::cmp::Ordering;
 
